@@ -1,26 +1,48 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #e84e3c; /* main primary #  2563eb*/
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html{
+  scroll-behavior: smooth;
+}
+.bg-hidmona-gradient {
+  background: linear-gradient(
+    90deg,
+    #e84e3c 0%,    /* raw red */
+    #ed441a 50%,   /* medium red */
+    #be2312 100%   /* deep red */
+  );
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.btn-hidmona {
+  background: linear-gradient(
+    90deg,
+    #e84e3c 0%,
+    #ed441a 50%,
+    #be2312 100%
+  );
+  color: #fff;
+  font-weight: 600;
+  border-top-right-radius: 1rem; /* 2xl */
+  border-bottom-left-radius: 1rem; /* 2xl */
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.btn-hidmona:hover {
+  border-top-left-radius: 1rem; /* 2xl */
+  border-bottom-right-radius: 1rem; /* 2xl */
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 0;
 }
