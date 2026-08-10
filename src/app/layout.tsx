@@ -1,14 +1,10 @@
-import type { Metadata } from 'next';
-import Script from 'next/script';
-import './globals.css';
+import type { Metadata } from "next";
+import Script from "next/script";
+import "./globals.css";
 
-// Meta Data and Favicon
 export const metadata: Metadata = {
-  title: 'Hidmona',
-  description: 'Hidmona Application',
-  icons: {
-    icon: '/FAV.png', // public/FAV.png ফোল্ডারে ছবিটি রাখবেন
-  },
+  title: "Hidmona Money Transfer",
+  description: "Fast & Secure Money Transfer",
 };
 
 export default function RootLayout({
@@ -19,32 +15,48 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google Translate Inline Function */}
-        <Script id="google-translate-init" strategy="beforeInteractive">
+        {/* Google Translate-এর ব্যানার ও পপআপ হাইড করার CSS */}
+        <style>{`
+          .goog-te-banner-frame, 
+          .goog-te-menu-value, 
+          .goog-te-gadget, 
+          .skiptranslate, 
+          .goog-te-banner, 
+          .goog-te-ftab {
+            display: none !important;
+          }
+          body { top: 0px !important; }
+          .goog-te-combo { 
+            display: none !important;
+          }
+        `}</style>
+      </head>
+      <body>
+        {/* Google Translate Init Function */}
+        <Script id="google-translate-init" strategy="afterInteractive">
           {`
             function googleTranslateElementInit() {
               new google.translate.TranslateElement(
-                {
-                  pageLanguage: "en",
-                  includedLanguages: "en",
+                { 
+                  pageLanguage: 'en',
+                  includedLanguages: 'en,fr',
+                  autoDisplay: false
                 },
-                "google_translate_element"
+                'google_translate_element'
               );
             }
           `}
         </Script>
-        
-        {/* Google Translate External CDN Script */}
+
+        {/* Google Translate External Script */}
         <Script
-          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
           strategy="afterInteractive"
         />
-      </head>
-      <body>
-        {/* Hidden div for Google Translate */}
-        <div id="google_translate_element" style={{ display: 'none' }}></div>
 
-        {/* Dynamic Page Content */}
+        {/* Hidden Google Translate Container */}
+        <div id="google_translate_element" style={{ display: 'none' }} />
+
         {children}
       </body>
     </html>

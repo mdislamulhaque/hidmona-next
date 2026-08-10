@@ -1,162 +1,61 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from "react";
-import { Globe } from "lucide-react";
+import Image from "next/image";
+import { ChevronDown } from "lucide-react";
 
-// Google Window Interface Extension for TS
 declare global {
   interface Window {
     google?: any;
+    googleTranslateElementInit?: () => void;
   }
+}
+
+interface LanguageOption {
+  code: string;
+  name: string;
+  flag: string;
 }
 
 export default function LanguageToggle() {
   const [lang, setLang] = useState<string>("en");
   const [open, setOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
-  // ইমেজ পাথ (ফাইলগুলো public/flags/ ফোল্ডারে রাখুন)
-  const enFlag = "/uk.png";
-  const frFlag = "/france.png";
+  const languages: LanguageOption[] = [
+    { code: "en", name: "English", flag: "/uk.png" },
+    { code: "fr", name: "French", flag: "/france.png" },
+  ];
 
-  // Google Translate দিয়ে পৃষ্ঠা অনুবাদ করার ফাংশন
-  const translatePage = (language: string) => {
-    // Method 1: Select element ব্যবহার করে
+  const applyTranslation = (targetLang: string) => {
+    document.cookie = `googtrans=/en/${targetLang}; path=/; domain=${window.location.hostname}`;
+    document.cookie = `googtrans=/en/${targetLang}; path=/`;
+
     const select = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
     if (select) {
-      select.value = language;
-      const event = new Event("change", { bubbles: true });
-      select.dispatchEvent(event);
-      console.log("Language changed via select element");
+      select.value = targetLang;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  };
+
+  const changeLanguage = (targetLang: string) => {
+    if (lang === targetLang) {
+      setOpen(false);
       return;
     }
 
-    // Method 2: Google Translate API সরাসরি ব্যবহার করে
-    if (window.google && window.google.translate) {
-      try {
-        const translateInstance = window.google.translate.TranslateElement.getInstance();
-        if (translateInstance) {
-          translateInstance.translatePage(language);
-          console.log("Language changed via API instance");
-          return;
-        }
-      } catch (error) {
-        console.log("API instance error:", error);
-      }
-    }
-
-    // Method 3: Fallback - iframe খুঁজে পরিবর্তন করুন
-    setTimeout(() => {
-      const iframe = document.querySelector(".goog-te-menu-frame") as HTMLIFrameElement | null;
-      if (iframe) {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
-        const iframeSelect = iframeDoc?.querySelector("select") as HTMLSelectElement | null;
-        if (iframeSelect && iframeSelect.value !== language) {
-          iframeSelect.value = language;
-          const iframeEvent = new Event("change", { bubbles: true });
-          iframeSelect.dispatchEvent(iframeEvent);
-          console.log("Language changed via iframe");
-        }
-      }
-    }, 100);
-
-    // Method 4: Cookie ব্যবহার করে
-    document.cookie = `googtrans=/auto/${language}; path=/; max-age=31536000`;
-    console.log("Language cookie set");
-  };
-
-  // ভাষা পরিবর্তনের ফাংশন
-  const changeLanguage = (language: string) => {
-    console.log("Changing language to:", language);
-    setLang(language);
-    localStorage.setItem("preferred-language", language);
+    setLang(targetLang);
+    localStorage.setItem("preferred-language", targetLang);
     setOpen(false);
-    translatePage(language);
+
+    applyTranslation(targetLang);
+    window.location.reload();
   };
 
-  // Google Translate লোড হয়েছে কিনা চেক করার ফাংশন
-  const checkGoogleTranslateLoaded = () => {
-    return document.querySelector(".goog-te-combo") !== null;
-  };
-
-  // ভাষা ইনিশিয়ালাইজেশন
-  const initializeLanguage = () => {
+  useEffect(() => {
     const savedLang = localStorage.getItem("preferred-language") || "en";
-    console.log("Initializing with language:", savedLang);
-
     setLang(savedLang);
-    setIsInitialized(true);
-
-    const initInterval = setInterval(() => {
-      if (checkGoogleTranslateLoaded()) {
-        clearInterval(initInterval);
-        console.log("Google Translate loaded, setting language:", savedLang);
-        translatePage(savedLang);
-
-        setTimeout(() => {
-          const select = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
-          if (select && select.value !== savedLang) {
-            console.log("Language not set correctly, retrying...");
-            translatePage(savedLang);
-          }
-        }, 500);
-      }
-    }, 100);
-
-    setTimeout(() => {
-      clearInterval(initInterval);
-      console.log("Google Translate loading timeout");
-    }, 5000);
-  };
-
-  useEffect(() => {
-    initializeLanguage();
-    window.addEventListener("load", initializeLanguage);
-
-    return () => {
-      window.removeEventListener("load", initializeLanguage);
-    };
   }, []);
-
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    const handleLanguageChange = () => {
-      const select = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
-      if (
-        select &&
-        select.value &&
-        (select.value === "en" || select.value === "fr")
-      ) {
-        if (select.value !== lang) {
-          console.log(
-            "Detected language change from Google Translate:",
-            select.value
-          );
-          setLang(select.value);
-          localStorage.setItem("preferred-language", select.value);
-        }
-      }
-    };
-
-    const interval = setInterval(handleLanguageChange, 2000);
-
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === "childList") {
-          handleLanguageChange();
-        }
-      });
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => {
-      clearInterval(interval);
-      observer.disconnect();
-    };
-  }, [lang, isInitialized]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -165,99 +64,63 @@ export default function LanguageToggle() {
       }
     };
 
-    const handleScroll = () => setOpen(false);
-
     document.addEventListener("mousedown", handleClickOutside);
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    const hideWidget = () => {
-      const style = document.createElement("style");
-      style.textContent = `
-        .goog-te-banner-frame, 
-        .goog-te-menu-value, 
-        .goog-te-gadget, 
-        .skiptranslate, 
-        .goog-te-banner, 
-        .goog-te-ftab {
-          display: none !important;
-        }
-        body { top: 0px !important; }
-        .goog-te-combo { 
-          opacity: 0;
-          position: absolute;
-          pointer-events: none;
-          width: 1px;
-          height: 1px;
-        }
-      `;
-      document.head.appendChild(style);
-      return style;
-    };
-
-    const styleElement = hideWidget();
-    const styleInterval = setInterval(hideWidget, 1000);
-
-    return () => {
-      clearInterval(styleInterval);
-      if (styleElement && styleElement.parentNode) {
-        styleElement.parentNode.removeChild(styleElement);
-      }
-    };
-  }, []);
-
-  const currentFlag = lang === "en" ? enFlag : frFlag;
-  const currentText = lang === "en" ? "English" : "French";
+  const currentLang = languages.find((l) => l.code === lang) || languages[0];
 
   return React.createElement(
     "div",
-    { className: "relative", ref: dropdownRef },
+    { className: "relative inline-block text-left", ref: dropdownRef },
     React.createElement(
       "button",
       {
-        onClick: () => setOpen(!open),
+        type: "button",
+        onClick: () => setOpen((prev) => !prev),
         className:
-          "flex items-center gap-2 px-3 py-2 rounded-2xl dark:border-gray-600 hover:text-primary-600 cursor-pointer",
+          "flex items-center gap-2 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:border-gray-300 transition-all cursor-pointer shadow-sm text-sm font-medium",
       },
-      React.createElement("img", {
-        src: currentFlag,
-        alt: "flag",
+      React.createElement(Image, {
+        src: currentLang.flag,
+        alt: currentLang.name,
         width: 20,
         height: 20,
-        className: "w-5 h-5",
+        className: "w-5 h-5 rounded-full object-cover shrink-0",
       }),
-      React.createElement("span", { className: "text-sm font-medium" }, currentText),
-      React.createElement(Globe, { size: 16 })
+      React.createElement("span", null, currentLang.name),
+      React.createElement(ChevronDown, {
+        className: "w-4 h-4 text-gray-400 shrink-0",
+      })
     ),
     open &&
       React.createElement(
         "div",
         {
           className:
-            "absolute right-0 mt-3 w-36 bg-white border rounded shadow-lg z-50 text-gray-900",
+            "absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg z-50 overflow-hidden py-1",
         },
-        React.createElement(
-          "button",
-          {
-            onClick: () => changeLanguage("en"),
-            className: `flex w-full items-center gap-2 px-3 py-2 hover:bg-gray-100 ${
-              lang === "en" ? "bg-blue-50 text-blue-600" : ""
-            }`,
-          },
-          React.createElement("img", {
-            src: enFlag,
-            alt: "English",
-            width: 20,
-            height: 20,
-            className: "w-5 h-5",
-          }),
-          "English"
+        ...languages.map((item) =>
+          React.createElement(
+            "button",
+            {
+              key: item.code,
+              type: "button",
+              onClick: () => changeLanguage(item.code),
+              className:
+                lang === item.code
+                  ? "flex w-full items-center gap-3 px-3 py-2 text-sm font-medium transition-colors bg-blue-50 text-blue-600 dark:bg-gray-700/50 dark:text-blue-400"
+                  : "flex w-full items-center gap-3 px-3 py-2 text-sm font-medium transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/30",
+            },
+            React.createElement(Image, {
+              src: item.flag,
+              alt: item.name,
+              width: 20,
+              height: 20,
+              className: "w-5 h-5 rounded-full object-cover shrink-0",
+            }),
+            React.createElement("span", null, item.name)
+          )
         )
       )
   );
