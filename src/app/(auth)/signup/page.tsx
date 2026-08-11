@@ -251,10 +251,10 @@ const Signup = () => {
             <div className="md:col-span-2">
               <FromSelect
                 value={formData.country}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                onChange={(e: { target: { value: string } }) =>
                   handleChange({
                     target: { name: "country", value: e.target.value },
-                  } as unknown as React.ChangeEvent<HTMLInputElement>)
+                  })
                 }
                 countries={countriesList}
                 label="Country"
