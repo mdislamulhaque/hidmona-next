@@ -176,7 +176,7 @@ function MoneyTransferFormContent() {
         {renderStepHeader(4, "Review & Confirm")}
         <div className={activeStep === 4 ? "block p-5" : "hidden"}>
           <Step4
-            formData={formData}
+            formData={formData as any}
             onPrev={() => setActiveStep(3)}
             onSubmit={(data: Partial<TransferFormData>) => handleStepComplete(4, data)}
           />
@@ -190,10 +190,6 @@ function MoneyTransferFormContent() {
           <Step5
             formData={formData}
             onPrev={() => setActiveStep(4)}
-            onPay={(data: Partial<TransferFormData>) => {
-              setFormData((prev) => ({ ...prev, ...data }));
-              alert("Payment Successful!");
-            }}
           />
         </div>
       </div>

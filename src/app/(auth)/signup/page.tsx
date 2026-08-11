@@ -31,6 +31,13 @@ const countriesList = [
   "Mexico",
 ];
 
+type SignupFieldChangeEvent = {
+  target: {
+    name: string;
+    value: string;
+  };
+};
+
 const Signup = () => {
   // Next.js App Router-এর জন্য useRouter
   const router = useRouter();
