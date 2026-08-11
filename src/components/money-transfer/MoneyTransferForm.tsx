@@ -124,7 +124,7 @@ function MoneyTransferFormContent() {
         )}
         <div className={activeStep === 1 ? "block p-5" : "hidden"}>
           <TransferForm
-            initialData={formData}
+            initialFormData={formData}
             onNext={(data) => handleStepComplete(1, data)}
           />
         </div>

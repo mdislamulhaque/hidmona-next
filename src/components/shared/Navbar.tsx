@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
               </Link>
               <Link
                 href="/signup"
-                className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors"
+                className="btn-hidmona text-white px-5 py-2  text-sm font-medium shadow-sm transition-colors"
               >
                 Sign Up
               </Link>
@@ -172,7 +172,7 @@ const Navbar: React.FC = () => {
               <Link
                 href="/signup"
                 onClick={() => setIsOpen(false)}
-                className="block w-full text-center bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-base font-medium shadow-sm transition-colors"
+                className="block w-full text-center btn-hidmona text-white px-3 py-2 rounded-lg text-base font-medium shadow-sm transition-colors"
               >
                 Sign Up
               </Link>
