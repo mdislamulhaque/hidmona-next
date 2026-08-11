@@ -1,7 +1,12 @@
 "use client";
 import { useState } from "react";
 
-export default function Step3({ onNext, onPrev }) {
+interface Step3Props {
+  onNext: (data: { sendingPurpose: string }) => void;
+  onPrev: () => void;
+}
+
+export default function Step3({ onNext, onPrev }: Step3Props) {
   // demo purposes – you can load from API later
   const purposes = [
     { id: 1, label: "Family Support" },

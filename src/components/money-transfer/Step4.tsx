@@ -2,9 +2,34 @@
 
 import { useState } from "react";
 
-export default function Step4({ formData, onPrev, onSubmit }) {
-  const [soleOwner, setSoleOwner] = useState(null);
-  const [firstTransaction, setFirstTransaction] = useState(null);
+interface TransferFormData {
+  from: string;
+  to: string;
+  amount: number | string;
+  currency: string;
+  convertedAmount: number | string;
+  targetCurrency: string;
+  recipientName: string;
+  recipientCountry: string;
+  deliveryMethod: string;
+  [key: string]: unknown;
+}
+
+interface Step4SubmissionData extends TransferFormData {
+  soleOwner: "yes" | "no" | null;
+  firstTransaction: "yes" | "no" | null;
+  agree: boolean;
+}
+
+interface Step4Props {
+  formData: TransferFormData;
+  onPrev: () => void;
+  onSubmit: (data: Step4SubmissionData) => void;
+}
+
+export default function Step4({ formData, onPrev, onSubmit }: Step4Props) {
+  const [soleOwner, setSoleOwner] = useState<"yes" | "no" | null>(null);
+  const [firstTransaction, setFirstTransaction] = useState<"yes" | "no" | null>(null);
   const [agree, setAgree] = useState(false);
 
   const handleSubmit = () => {
@@ -13,7 +38,7 @@ export default function Step4({ formData, onPrev, onSubmit }) {
       return;
     }
 
-    const finalData = {
+    const finalData: Step4SubmissionData = {
       ...formData,
       soleOwner,
       firstTransaction,

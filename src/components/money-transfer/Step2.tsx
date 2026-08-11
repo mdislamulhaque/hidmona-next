@@ -2,9 +2,24 @@
 import { useState } from "react";
 import { UserPlus } from "lucide-react"; // optional icon
 
-export default function Step2({ onNext, onPrev }) {
+interface Recipient {
+  id: number;
+  name: string;
+}
+
+interface TransferRecipientData {
+  recipientId: string;
+  recipientName: string;
+}
+
+interface Step2Props {
+  onNext: (data: TransferRecipientData) => void;
+  onPrev: () => void;
+}
+
+export default function Step2({ onNext, onPrev }: Step2Props) {
   // existing recipients (later you can load from API)
-  const [recipients, setRecipients] = useState([
+  const [recipients, setRecipients] = useState<Recipient[]>([
     { id: 1, name: "John Doe" },
     { id: 2, name: "Jane Smith" },
   ]);
@@ -17,7 +32,7 @@ export default function Step2({ onNext, onPrev }) {
     if (!newName.trim()) return;
     const newRec = { id: Date.now(), name: newName.trim() };
     setRecipients([...recipients, newRec]);
-    setSelected(newRec.id);
+    setSelected(String(newRec.id));
     setNewName("");
     setShowForm(false);
   };

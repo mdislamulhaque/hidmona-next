@@ -3,7 +3,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Step5({ formData, onPrev }) {
+type Step5FormData = {
+  sendingAmount?: number | string;
+  amount?: number | string;
+  fromCurrency?: string;
+  currency?: string;
+  [key: string]: unknown;
+};
+
+type Step5Props = {
+  formData: Step5FormData;
+  onPrev: () => void;
+};
+
+export default function Step5({ formData, onPrev }: Step5Props) {
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");

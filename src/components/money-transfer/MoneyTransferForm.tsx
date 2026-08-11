@@ -1,7 +1,8 @@
 'use client'; // Next.js App Router-এর Client Component
 
 import { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation"; 
+import type { ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 
 import Step2 from "./Step2";
@@ -10,13 +11,23 @@ import Step4 from "./Step4";
 import Step5 from "./Step5";
 import TransferForm from "../../components/home/heroSection/TransferForm";
 
+export interface TransferFormData {
+  fromCountry?: string;
+  toCountry?: string;
+  sendingAmount?: string | number;
+  fromCurrency?: string;
+  recipientName?: string;
+  reason?: string;
+  [key: string]: any;
+}
+
 function MoneyTransferFormContent() {
   const searchParams = useSearchParams();
-  const [activeStep, setActiveStep] = useState(1);
-  const [completedSteps, setCompletedSteps] = useState([]);
-  const [formData, setFormData] = useState({});
+  const [activeStep, setActiveStep] = useState<number | null>(1);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [formData, setFormData] = useState<TransferFormData>({});
 
-  // URL Query Params থেকে ডেটা পড়ার লজিক (যেমন: /transfer?fromCountry=Sweden&sendingAmount=1000)
+  // URL Query Params থেকে ডেটা পড়ার লজিক
   useEffect(() => {
     const fromCountry = searchParams.get("fromCountry");
     const toCountry = searchParams.get("toCountry");
@@ -24,29 +35,29 @@ function MoneyTransferFormContent() {
     const fromCurrency = searchParams.get("fromCurrency");
 
     if (fromCountry && sendingAmount) {
-      const initialData = {
+      setFormData((prev) => ({
+        ...prev,
         fromCountry,
-        toCountry,
+        toCountry: toCountry || undefined,
         sendingAmount,
-        fromCurrency,
-      };
-      setFormData(initialData);
+        fromCurrency: fromCurrency || undefined,
+      }));
       setCompletedSteps([1]);
       setActiveStep(2);
     }
   }, [searchParams]);
 
-  const handleStepComplete = (stepNumber, data) => {
+  const handleStepComplete = (stepNumber: number, data: Partial<TransferFormData>): void => {
     setFormData((prev) => ({ ...prev, ...data }));
 
-    if (!completedSteps.includes(stepNumber)) {
-      setCompletedSteps((prev) => [...prev, stepNumber]);
-    }
+    setCompletedSteps((prev) =>
+      prev.includes(stepNumber) ? prev : [...prev, stepNumber]
+    );
 
     setActiveStep(stepNumber + 1);
   };
 
-  const handleHeaderClick = (stepNumber) => {
+  const handleHeaderClick = (stepNumber: number): void => {
     if (activeStep === stepNumber) {
       setActiveStep(null);
       return;
@@ -55,13 +66,17 @@ function MoneyTransferFormContent() {
     if (
       stepNumber === 1 ||
       completedSteps.includes(stepNumber - 1) ||
-      stepNumber <= activeStep
+      (activeStep !== null && stepNumber <= activeStep)
     ) {
       setActiveStep(stepNumber);
     }
   };
 
-  const renderStepHeader = (stepNumber, title, summaryText) => {
+  const renderStepHeader = (
+    stepNumber: number,
+    title: string,
+    summaryText?: string
+  ): ReactNode => {
     const isActive = activeStep === stepNumber;
     const isCompleted = completedSteps.includes(stepNumber);
 
@@ -119,13 +134,13 @@ function MoneyTransferFormContent() {
           1,
           "Transfer Details",
           formData.fromCountry
-            ? `${formData.fromCountry} ➔ ${formData.toCountry} (${formData.sendingAmount} ${formData.fromCurrency || ""})`
+            ? `${formData.fromCountry} ➔ ${formData.toCountry || ""} (${formData.sendingAmount} ${formData.fromCurrency || ""})`
             : ""
         )}
         <div className={activeStep === 1 ? "block p-5" : "hidden"}>
           <TransferForm
             initialFormData={formData}
-            onNext={(data) => handleStepComplete(1, data)}
+            onNext={(data: Partial<TransferFormData>) => handleStepComplete(1, data)}
           />
         </div>
       </div>
@@ -139,8 +154,7 @@ function MoneyTransferFormContent() {
         )}
         <div className={activeStep === 2 ? "block p-5" : "hidden"}>
           <Step2
-            formData={formData}
-            onNext={(data) => handleStepComplete(2, data)}
+            onNext={(data: Partial<TransferFormData>) => handleStepComplete(2, data)}
             onPrev={() => setActiveStep(1)}
           />
         </div>
@@ -151,9 +165,8 @@ function MoneyTransferFormContent() {
         {renderStepHeader(3, "Reason for Transfer", formData.reason)}
         <div className={activeStep === 3 ? "block p-5" : "hidden"}>
           <Step3
-            formData={formData}
             onPrev={() => setActiveStep(2)}
-            onNext={(data) => handleStepComplete(3, data)}
+            onNext={(data: Partial<TransferFormData>) => handleStepComplete(3, data)}
           />
         </div>
       </div>
@@ -165,7 +178,7 @@ function MoneyTransferFormContent() {
           <Step4
             formData={formData}
             onPrev={() => setActiveStep(3)}
-            onSubmit={(data) => handleStepComplete(4, data)}
+            onSubmit={(data: Partial<TransferFormData>) => handleStepComplete(4, data)}
           />
         </div>
       </div>
@@ -177,7 +190,7 @@ function MoneyTransferFormContent() {
           <Step5
             formData={formData}
             onPrev={() => setActiveStep(4)}
-            onPay={(data) => {
+            onPay={(data: Partial<TransferFormData>) => {
               setFormData((prev) => ({ ...prev, ...data }));
               alert("Payment Successful!");
             }}
@@ -188,7 +201,7 @@ function MoneyTransferFormContent() {
   );
 }
 
-// Next.js-এ useSearchParams ব্যবহার করলে Suspense দিয়ে র‍্যাপ করা আবশ্যক
+// Next.js-এ useSearchParams ব্যবহার করলে Suspense দিয়ে র‍্যাপ করা আবশ্যক
 export default function MoneyTransferForm() {
   return (
     <Suspense fallback={<div className="text-center py-10">Loading...</div>}>
