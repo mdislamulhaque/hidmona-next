@@ -57,7 +57,9 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | SignupFieldChangeEvent
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
