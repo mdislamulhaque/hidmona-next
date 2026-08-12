@@ -9,6 +9,8 @@ import {
   Wallet,
   CreditCard,
   Zap,
+  ArrowRight,
+  CheckCircle2,
   LucideIcon,
 } from "lucide-react";
 
@@ -35,49 +37,35 @@ interface GradientIconProps {
 
 // Motion Animation Variants
 const sectionVariants: Variants = {
-  hidden: { opacity: 0, y: 60 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94],
-      staggerChildren: 0.2,
+      staggerChildren: 0.12,
     },
   },
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 40, scale: 0.9 },
-  visible: (i: number) => ({
+  hidden: { opacity: 0, y: 30, scale: 0.96 },
+  visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
-      delay: i * 0.15,
-      duration: 0.6,
-      ease: [0.34, 1.56, 0.64, 1],
-    },
-  }),
-};
-
-const floatingVariants: Variants = {
-  float: {
-    y: [-8, 8, -8],
-    transition: {
-      duration: 3,
-      repeat: Infinity, // Fixed: Smooth infinite floating
-      ease: "easeInOut",
+      duration: 0.5,
+      ease: [0.16, 1, 0.3, 1],
     },
   },
 };
 
-// Custom Icon Component with gradient support
-const GradientIcon: React.FC<GradientIconProps> = ({ icon: Icon, gradient, size = 24 }) => (
+// Custom Gradient Icon Component
+const GradientIcon: React.FC<GradientIconProps> = ({ icon: Icon, gradient, size = 26 }) => (
   <div
-    className={`w-16 h-16 rounded-2xl ${gradient} flex items-center justify-center shadow-lg mb-4`}
+    className={`relative w-14 h-14 rounded-2xl ${gradient} flex items-center justify-center shadow-md shadow-primary-600/20 group-hover:scale-110 group-hover:shadow-lg transition-all duration-300`}
   >
-    <Icon size={size} className="text-white" />
+    <Icon size={size} className="text-white relative z-10" />
+    <div className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
   </div>
 );
 
@@ -88,16 +76,16 @@ export default function Services2() {
       description:
         "Send and receive money across borders with competitive exchange rates and low fees.",
       icon: Globe,
-      gradient: "bg-hidmona-gradient",
+      gradient: "bg-primary-600",
       features: ["Fast Transfer", "Low Fees", "150+ Countries"],
       stats: { value: "50M+", label: "Transactions" },
     },
     {
-      title: "Cash and Account Remittances",
+      title: "Cash & Account Remittances",
       description:
         "Easy cash pickup and direct bank account transfers for your convenience.",
       icon: ArrowLeftRight,
-      gradient: "bg-hidmona-gradient",
+      gradient: "bg-primary-600",
       features: ["Instant Processing", "Multiple Options", "24/7 Service"],
       stats: { value: "99.9%", label: "Success Rate" },
     },
@@ -106,7 +94,7 @@ export default function Services2() {
       description:
         "User-friendly online portal and mobile app for seamless banking experience.",
       icon: Smartphone,
-      gradient: "bg-hidmona-gradient",
+      gradient: "bg-primary-600",
       features: ["Mobile App", "Web Portal", "Real-time Tracking"],
       stats: { value: "1M+", label: "Active Users" },
     },
@@ -115,7 +103,7 @@ export default function Services2() {
       description:
         "Transfer money directly to mobile wallets instantly and securely.",
       icon: Wallet,
-      gradient: "bg-hidmona-gradient",
+      gradient: "bg-primary-600",
       features: ["Instant Transfer", "Mobile Wallets", "Secure"],
       stats: { value: "24/7", label: "Availability" },
     },
@@ -124,113 +112,113 @@ export default function Services2() {
       description:
         "Issue personalized debit cards with advanced security features.",
       icon: CreditCard,
-      gradient: "bg-hidmona-gradient",
+      gradient: "bg-primary-600",
       features: ["Visa/Mastercard", "Contactless", "Zero Liability"],
       stats: { value: "500K+", label: "Cards Issued" },
     },
   ];
 
   return (
-    <motion.section
-      className="min-h-screen py-20 px-4 bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden"
-      variants={sectionVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-    >
-      {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-r from-blue-200/20 to-purple-200/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-cyan-200/20 to-pink-200/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+    <section className="relative min-h-screen py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 via-white to-gray-50/50 overflow-hidden">
+      {/* Dynamic Background Glow Orbs */}
+      <div className="absolute top-1/4 left-10 w-96 h-96 bg-primary-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-primary-600/5 rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="container mx-auto max-w-7xl relative z-10">
-        {/* Header */}
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header Section */}
         <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 40 }}
+          className="text-center max-w-3xl mx-auto mb-20"
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <motion.span
-            className="inline-flex items-center px-4 py-2 bg-blue-600/10 text-blue-600 text-primary-600 rounded-full text-sm font-medium mb-4"
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring" }}
-            viewport={{ once: true }}
-          >
-            <Zap size={16} className="mr-2 text-primary-600" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-600/10 text-primary-600 text-xs font-bold tracking-wide uppercase mb-4 border border-primary-600/20">
+            <Zap size={14} className="animate-pulse" />
             Our Services
-          </motion.span>
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-4">
-            Premium Financial Solutions
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight mb-4 leading-tight">
+            Premium Financial <br className="hidden sm:inline" />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-primary-600 to-gray-800">
+              Solutions For Everyone
+            </span>
           </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Experience seamless banking with our cutting-edge services designed
-            for the modern world
+
+          <p className="text-base sm:text-lg text-gray-600 max-w-xl mx-auto leading-relaxed">
+            Experience seamless banking with our cutting-edge services designed for the modern digital era.
           </p>
         </motion.div>
 
-        {/* Services Cards Container */}
+        {/* Services Grid */}
         <motion.div
-          className="relative"
-          variants={floatingVariants}
-          animate="float"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
         >
-          {/* Responsive Grid System */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, i) => (
-              <motion.div
-                key={service.title}
-                className="group relative h-full"
-                variants={cardVariants}
-                custom={i}
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/20 h-full hover:shadow-2xl transition-all duration-300 flex flex-col justify-between">
-                  <div>
-                    {/* Icon & Stat */}
-                    <div className="flex justify-between items-start mb-4">
-                      <GradientIcon
-                        icon={service.icon}
-                        gradient={service.gradient}
-                        size={28}
-                      />
-                      <motion.span
-                        className="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm font-medium"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        {service.stats.value}
-                      </motion.span>
-                    </div>
+          {services.map((service, i) => (
+            <motion.div
+              key={service.title}
+              variants={cardVariants}
+              whileHover={{ y: -8 }}
+              className="group relative bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-2xl hover:border-primary-600/20 transition-all duration-300 flex flex-col justify-between overflow-hidden"
+            >
+              {/* Top Accent Highlight */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                    {/* Content */}
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                      {service.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                      {service.description}
-                    </p>
-                  </div>
-
-                  {/* Features */}
-                  <div className="space-y-2 mt-auto">
-                    {service.features.map((feature) => (
-                      <div
-                        key={feature}
-                        className="flex items-center text-sm text-gray-500"
-                      >
-                        <div className="w-2 h-2 bg-hidmona-gradient rounded-full mr-3" />
-                        {feature}
-                      </div>
-                    ))}
+              <div>
+                {/* Header: Icon & Badge */}
+                <div className="flex justify-between items-start mb-6">
+                  <GradientIcon
+                    icon={service.icon}
+                    gradient={service.gradient}
+                  />
+                  
+                  <div className="text-right">
+                    <span className="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-full border border-emerald-200/50">
+                      {service.stats.value}
+                    </span>
+                    <span className="block text-[11px] text-gray-400 mt-1 font-medium">
+                      {service.stats.label}
+                    </span>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </div>
+
+                {/* Service Title & Description */}
+                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-200">
+                  {service.title}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                  {service.description}
+                </p>
+              </div>
+
+              <div>
+                {/* Feature Tags List */}
+                <div className="space-y-2.5 pt-4 border-t border-gray-100/80 mb-6">
+                  {service.features.map((feature) => (
+                    <div
+                      key={feature}
+                      className="flex items-center text-xs font-semibold text-gray-500 group-hover:text-gray-700 transition-colors duration-200"
+                    >
+                      <CheckCircle2 size={14} className="text-primary-600 mr-2 shrink-0" />
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Action Link Footer */}
+                <div className="flex items-center text-xs font-bold text-primary-600 group/link cursor-pointer">
+                  <span>Explore Features</span>
+                  <ArrowRight size={14} className="ml-1.5 transform group-hover/link:translate-x-1 transition-transform duration-200" />
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
-    </motion.section>
+    </section>
   );
 }
